@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Master</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color:#61199e;
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .topic-selection {
+            text-align: center;
+        }
+
+        .topics {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .topic-btn {
+            background-color: #61199e;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+
+        .topic-btn:hover {
+            background-color: #61199e;
+            transform: translateY(-2px);
+        }
+
+        .quiz-container {
+            display: none;
+        }
+
+        .question-number {
+            font-size: 1.2rem;
+            color: #61199e;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .option:hover {
+            background-color: #f0f4f8;
+            border-color: #61199e;
+        }
+
+        .option.selected {
+            background-color: #e1eaf5;
+            border-color: #61199e;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: #00ff00;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #00ff00;
+        }
+
+        .btn-secondary {
+            background-color: #ff0000;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #ff0000;
+        }
+
+        /* .explanation {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f0f4f8;
+            border-radius: 6px;
+            display: none;
+        } */
+
+        .results {
+            text-align: center;
+            display: none;
+        }
+
+        .score {
+            font-size: 3rem;
+            color: #4a6fa5;
+            margin: 20px 0;
+        }
+
+        .message {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: #4a6fa5;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .topics {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .topic-btn {
+                width: 100%;
+                max-width: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Quiz Master</h1>
+            <p class="subtitle">Test your knowledge in various computer science topics</p>
+        </header>
+
+        <div class="card topic-selection" id="topicSelection">
+            <h2>Choose a Topic</h2>
+            <div class="topics">
+                <button class="topic-btn" data-topic="oops">Object Oriented Programming</button>
+                <button class="topic-btn" data-topic="os">Operating Systems</button>
+                <button class="topic-btn" data-topic="dbms">Database Management</button>
+                <button class="topic-btn" data-topic="cn">Computer Networks</button>
+            </div>
+        </div>
+
+        <div class="card quiz-container" id="quizContainer">
+            <div class="progress-bar">
+                <div class="progress" id="progressBar"></div>
+            </div>
+            <div class="question-number" id="questionNumber">Question 1 of 10</div>
+            <div class="question-text" id="questionText"></div>
+            <div class="options" id="optionsContainer"></div>
+            <!-- <div class="explanation" id="explanation">
+                <strong>Explanation:</strong> <span id="explanationText"></span>
+            </div> -->
+            <div class="navigation">
+                <button class="btn btn-secondary" id="prevBtn">Previous</button>
+                <button class="btn btn-primary" id="nextBtn">Next</button>
+            </div>
+        </div>
+
+        <div class="card results" id="resultsContainer">
+            <h2>Quiz Completed!</h2>
+            <div class="score" id="score">0/10</div>
+            <div class="message" id="message"></div>
+            <button class="btn btn-primary" id="restartBtn">Take Another Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        // Quiz data organized by topic
+        const quizData = {
+            oops: [
+                {
+                    question: "What is encapsulation in OOP?",
+                    options: [
+                        "The process of hiding implementation details",
+                        "The ability to create multiple methods with the same name",
+                        "The mechanism of basing an object upon another object",
+                        "The process of combining data and functions into a single unit"
+                    ],
+                    correct: 3,
+                    explanation: "Encapsulation is the bundling of data and the methods that operate on that data into a single unit, restricting direct access to some of the object's components."
+                },
+                {
+                    question: "Which concept allows a class to derive properties from another class?",
+                    options: [
+                        "Encapsulation",
+                        "Polymorphism",
+                        "Inheritance",
+                        "Abstraction"
+                    ],
+                    correct: 2,
+                    explanation: "Inheritance allows a class (subclass) to inherit attributes and methods from another class (superclass), promoting code reusability."
+                },
+                {
+                    question: "What is polymorphism in OOP?",
+                    options: [
+                        "The ability to take more than one form",
+                        "The process of hiding implementation details",
+                        "The bundling of data and methods",
+                        "The mechanism of creating objects"
+                    ],
+                    correct: 0,
+                    explanation: "Polymorphism allows objects of different classes to be treated as objects of a common superclass, typically through method overriding or overloading."
+                },
+                {
+                    question: "Which of the following is NOT a pillar of OOP?",
+                    options: [
+                        "Inheritance",
+                        "Polymorphism",
+                        "Encapsulation",
+                        "Compilation"
+                    ],
+                    correct: 3,
+                    explanation: "The four main pillars of OOP are encapsulation, inheritance, polymorphism, and abstraction. Compilation is a process, not an OOP concept."
+                },
+                {
+                    question: "What is an abstract class?",
+                    options: [
+                        "A class that cannot be instantiated",
+                        "A class with only static methods",
+                        "A class that implements multiple interfaces",
+                        "A class with no methods"
+                    ],
+                    correct: 0,
+                    explanation: "An abstract class is a class that cannot be instantiated and is meant to be subclassed. It may contain abstract methods that must be implemented by subclasses."
+                },
+                {
+                    question: "Which keyword is used to achieve inheritance in Java?",
+                    options: [
+                        "implements",
+                        "extends",
+                        "inherits",
+                        "super"
+                    ],
+                    correct: 1,
+                    explanation: "In Java, the 'extends' keyword is used to create a subclass that inherits from a superclass."
+                },
+                {
+                    question: "What is method overloading?",
+                    options: [
+                        "Defining multiple methods with the same name but different parameters",
+                        "Redefining a method in a subclass",
+                        "Creating a method that calls itself",
+                        "Hiding a method from the parent class"
+                    ],
+                    correct: 0,
+                    explanation: "Method overloading occurs when multiple methods in the same class have the same name but different parameters (different type, number, or both)."
+                },
+                {
+                    question: "What is the purpose of a constructor?",
+                    options: [
+                        "To destroy objects",
+                        "To initialize objects",
+                        "To inherit properties",
+                        "To override methods"
+                    ],
+                    correct: 1,
+                    explanation: "A constructor is a special method that is called when an object is instantiated. It is used to initialize the object's state."
+                },
+                {
+                    question: "Which concept is related to the 'is-a' relationship?",
+                    options: [
+                        "Composition",
+                        "Aggregation",
+                        "Inheritance",
+                        "Encapsulation"
+                    ],
+                    correct: 2,
+                    explanation: "Inheritance represents an 'is-a' relationship, where a subclass is a type of its superclass (e.g., a Car is a Vehicle)."
+                },
+                {
+                    question: "What is dynamic binding?",
+                    options: [
+                        "Linking function calls to function definitions at compile time",
+                        "Linking function calls to function definitions at runtime",
+                        "Binding variables to types",
+                        "Creating objects dynamically"
+                    ],
+                    correct: 1,
+                    explanation: "Dynamic binding (or late binding) occurs when the method to be called is determined at runtime based on the actual object type, not the reference type."
+                }
+            ],
+            os: [
+                {
+                    question: "What is the main purpose of an operating system?",
+                    options: [
+                        "To manage computer hardware and software resources",
+                        "To provide a user interface",
+                        "To run applications",
+                        "All of the above"
+                    ],
+                    correct: 3,
+                    explanation: "An operating system manages hardware resources, provides a user interface, and enables applications to run on the computer."
+                },
+                {
+                    question: "Which scheduling algorithm allocates the CPU to the process that requests it first?",
+                    options: [
+                        "Shortest Job First",
+                        "Round Robin",
+                        "First Come First Served",
+                        "Priority Scheduling"
+                    ],
+                    correct: 2,
+                    explanation: "First Come First Served (FCFS) is a non-preemptive scheduling algorithm where processes are executed in the order they arrive in the ready queue."
+                },
+                {
+                    question: "What is virtual memory?",
+                    options: [
+                        "Memory that exists only virtually",
+                        "A technique that uses disk space as an extension of RAM",
+                        "Memory used by virtual machines",
+                        "A type of cache memory"
+                    ],
+                    correct: 1,
+                    explanation: "Virtual memory is a memory management technique that uses secondary storage (like a hard disk) to supplement the physical RAM, allowing programs to use more memory than physically available."
+                },
+                {
+                    question: "What is a deadlock in operating systems?",
+                    options: [
+                        "A situation where a process is waiting for a resource that will never become available",
+                        "A process that has terminated unexpectedly",
+                        "A security vulnerability in the OS",
+                        "A type of memory leak"
+                    ],
+                    correct: 0,
+                    explanation: "A deadlock occurs when two or more processes are unable to proceed because each is waiting for one of the others to release a resource."
+                },
+                {
+                    question: "Which of the following is NOT a state in the process lifecycle?",
+                    options: [
+                        "Running",
+                        "Waiting",
+                        "Terminated",
+                        "Compiling"
+                    ],
+                    correct: 3,
+                    explanation: "The typical process states are New, Ready, Running, Waiting, and Terminated. Compiling is not a process state."
+                },
+                {
+                    question: "What is the role of the kernel in an operating system?",
+                    options: [
+                        "To provide a user interface",
+                        "To manage system resources and communication between hardware and software",
+                        "To run application programs",
+                        "To manage files on disk"
+                    ],
+                    correct: 1,
+                    explanation: "The kernel is the core component of an operating system that manages system resources, handles hardware-software communication, and provides essential services."
+                },
+                {
+                    question: "What is thrashing in the context of virtual memory?",
+                    options: [
+                        "A situation where the system spends more time paging than executing",
+                        "A security attack on memory",
+                        "A type of memory compression",
+                        "A method of memory allocation"
+                    ],
+                    correct: 0,
+                    explanation: "Thrashing occurs when the operating system spends most of its time swapping pages between memory and disk rather than executing instructions, severely degrading system performance."
+                },
+                {
+                    question: "Which of the following is a real-time operating system?",
+                    options: [
+                        "Windows 10",
+                        "macOS",
+                        "VxWorks",
+                        "Ubuntu"
+                    ],
+                    correct: 2,
+                    explanation: "VxWorks is a real-time operating system (RTOS) designed for embedded systems that require deterministic timing and response."
+                },
+                {
+                    question: "What is the purpose of a semaphore?",
+                    options: [
+                        "To signal events between processes",
+                        "To manage access to shared resources",
+                        "To allocate memory",
+                        "To schedule processes"
+                    ],
+                    correct: 1,
+                    explanation: "A semaphore is a synchronization primitive used to control access to shared resources in a concurrent system, preventing race conditions."
+                },
+                {
+                    question: "Which file system is commonly used in Linux?",
+                    options: [
+                        "NTFS",
+                        "FAT32",
+                        "ext4",
+                        "HFS+"
+                    ],
+                    correct: 2,
+                    explanation: "ext4 (Fourth Extended File System) is the default file system for many Linux distributions, offering improvements over its predecessor ext3."
+                }
+            ],
+            dbms: [
+                {
+                    question: "What does DBMS stand for?",
+                    options: [
+                        "Database Management System",
+                        "Data Business Management System",
+                        "Digital Base Management System",
+                        "Database Manipulation System"
+                    ],
+                    correct: 0,
+                    explanation: "DBMS stands for Database Management System, which is software for creating, managing, and manipulating databases."
+                },
+                {
+                    question: "Which of the following is NOT a type of database model?",
+                    options: [
+                        "Relational",
+                        "Hierarchical",
+                        "Network",
+                        "Sequential"
+                    ],
+                    correct: 3,
+                    explanation: "The main database models are relational, hierarchical, network, and object-oriented. Sequential is not a database model."
+                },
+                {
+                    question: "What is a primary key in a database?",
+                    options: [
+                        "A key that can have null values",
+                        "A key that uniquely identifies each record in a table",
+                        "A key that references another table",
+                        "A key used for encryption"
+                    ],
+                    correct: 1,
+                    explanation: "A primary key is a column or set of columns that uniquely identifies each row in a table. It cannot contain null values and must be unique."
+                },
+                {
+                    question: "What is normalization in database design?",
+                    options: [
+                        "The process of organizing data to reduce redundancy",
+                        "The process of making data consistent",
+                        "The process of backing up data",
+                        "The process of encrypting data"
+                    ],
+                    correct: 0,
+                    explanation: "Normalization is the process of organizing data in a database to reduce redundancy and improve data integrity by dividing large tables into smaller ones and defining relationships between them."
+                },
+                {
+                    question: "Which SQL command is used to retrieve data from a database?",
+                    options: [
+                        "GET",
+                        "SELECT",
+                        "RETRIEVE",
+                        "FIND"
+                    ],
+                    correct: 1,
+                    explanation: "The SELECT statement is used to query and retrieve data from one or more tables in a database."
+                },
+                {
+                    question: "What is a foreign key?",
+                    options: [
+                        "A key that is not native to the database",
+                        "A key that uniquely identifies a record",
+                        "A key that references the primary key of another table",
+                        "A key used for security purposes"
+                    ],
+                    correct: 2,
+                    explanation: "A foreign key is a column or set of columns in one table that references the primary key in another table, establishing a relationship between the two tables."
+                },
+                {
+                    question: "Which normal form requires that there are no partial dependencies?",
+                    options: [
+                        "First Normal Form (1NF)",
+                        "Second Normal Form (2NF)",
+                        "Third Normal Form (3NF)",
+                        "Boyce-Codd Normal Form (BCNF)"
+                    ],
+                    correct: 1,
+                    explanation: "Second Normal Form (2NF) requires that the table is in 1NF and has no partial dependencies (all non-key attributes are fully functionally dependent on the primary key)."
+                },
+                {
+                    question: "What is the purpose of an index in a database?",
+                    options: [
+                        "To improve the speed of data retrieval",
+                        "To ensure data integrity",
+                        "To create backups",
+                        "To encrypt data"
+                    ],
+                    correct: 0,
+                    explanation: "An index is a database object that improves the speed of data retrieval operations on a table at the cost of additional storage and slower writes."
+                },
+                {
+                    question: "Which of the following is NOT an ACID property?",
+                    options: [
+                        "Atomicity",
+                        "Consistency",
+                        "Isolation",
+                        "Redundancy"
+                    ],
+                    correct: 3,
+                    explanation: "The ACID properties are Atomicity, Consistency, Isolation, and Durability. Redundancy is not an ACID property."
+                },
+                {
+                    question: "What is a transaction in DBMS?",
+                    options: [
+                        "A single SQL statement",
+                        "A sequence of operations performed as a single logical unit of work",
+                        "A backup operation",
+                        "A data export operation"
+                    ],
+                    correct: 1,
+                    explanation: "A transaction is a sequence of database operations that are executed as a single logical unit of work. Either all operations are completed, or none are, ensuring data integrity."
+                }
+            ],
+            cn: [
+                {
+                    question: "What does LAN stand for?",
+                    options: [
+                        "Local Area Network",
+                        "Long Area Network",
+                        "Large Area Network",
+                        "Logical Area Network"
+                    ],
+                    correct: 0,
+                    explanation: "LAN stands for Local Area Network, which is a network that connects computers in a limited geographical area such as a home, school, or office building."
+                },
+                {
+                    question: "Which protocol is used for sending email?",
+                    options: [
+                        "HTTP",
+                        "FTP",
+                        "SMTP",
+                        "TCP"
+                    ],
+                    correct: 2,
+                    explanation: "SMTP (Simple Mail Transfer Protocol) is used for sending email messages between servers and from clients to servers."
+                },
+                {
+                    question: "What is the purpose of DNS?",
+                    options: [
+                        "To assign IP addresses",
+                        "To translate domain names to IP addresses",
+                        "To secure network connections",
+                        "To manage network resources"
+                    ],
+                    correct: 1,
+                    explanation: "DNS (Domain Name System) translates human-readable domain names (like www.example.com) into IP addresses that computers use to identify each other on the network."
+                },
+                {
+                    question: "Which layer of the OSI model is responsible for routing?",
+                    options: [
+                        "Physical Layer",
+                        "Data Link Layer",
+                        "Network Layer",
+                        "Transport Layer"
+                    ],
+                    correct: 2,
+                    explanation: "The Network Layer (Layer 3) is responsible for routing packets across different networks, determining the best path for data transmission."
+                },
+                {
+                    question: "What is the main difference between TCP and UDP?",
+                    options: [
+                        "TCP is faster than UDP",
+                        "TCP is connection-oriented while UDP is connectionless",
+                        "UDP provides reliable delivery while TCP does not",
+                        "TCP is used for video streaming while UDP is used for web browsing"
+                    ],
+                    correct: 1,
+                    explanation: "TCP (Transmission Control Protocol) is connection-oriented and provides reliable, ordered delivery of data. UDP (User Datagram Protocol) is connectionless and does not guarantee delivery or ordering."
+                },
+                {
+                    question: "What is an IP address?",
+                    options: [
+                        "A unique identifier for a website",
+                        "A unique identifier for a computer on a network",
+                        "A protocol for internet communication",
+                        "A type of network cable"
+                    ],
+                    correct: 1,
+                    explanation: "An IP address is a unique numerical identifier assigned to each device connected to a computer network that uses the Internet Protocol for communication."
+                },
+                {
+                    question: "Which device operates at the Data Link layer of the OSI model?",
+                    options: [
+                        "Router",
+                        "Switch",
+                        "Hub",
+                        "Repeater"
+                    ],
+                    correct: 1,
+                    explanation: "A switch operates at the Data Link layer (Layer 2) of the OSI model and uses MAC addresses to forward data to the correct destination within a local network."
+                },
+                {
+                    question: "What is the purpose of HTTP?",
+                    options: [
+                        "To transfer files between computers",
+                        "To send and receive email",
+                        "To transfer web pages on the internet",
+                        "To secure network connections"
+                    ],
+                    correct: 2,
+                    explanation: "HTTP (Hypertext Transfer Protocol) is used for transferring web pages and other resources on the World Wide Web."
+                },
+                {
+                    question: "What is a firewall?",
+                    options: [
+                        "A security system that controls network traffic",
+                        "A device that connects multiple networks",
+                        "A protocol for secure communication",
+                        "A type of virus protection"
+                    ],
+                    correct: 0,
+                    explanation: "A firewall is a network security system that monitors and controls incoming and outgoing network traffic based on predetermined security rules."
+                },
+                {
+                    question: "Which of the following is a private IP address range?",
+                    options: [
+                        "192.168.1.1",
+                        "8.8.8.8",
+                        "172.217.16.206",
+                        "104.16.249.249"
+                    ],
+                    correct: 0,
+                    explanation: "192.168.x.x is part of the private IP address ranges defined in RFC 1918, which are reserved for use within private networks and are not routable on the public internet."
+                }
+            ]
+        };
+
+        // DOM elements
+        const topicSelection = document.getElementById('topicSelection');
+        const quizContainer = document.getElementById('quizContainer');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const topicButtons = document.querySelectorAll('.topic-btn');
+        const questionNumber = document.getElementById('questionNumber');
+        const questionText = document.getElementById('questionText');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const explanation = document.getElementById('explanation');
+        const explanationText = document.getElementById('explanationText');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const progressBar = document.getElementById('progressBar');
+        const scoreElement = document.getElementById('score');
+        const messageElement = document.getElementById('message');
+        const restartBtn = document.getElementById('restartBtn');
+
+        // Quiz state
+        let currentTopic = '';
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let score = 0;
+
+        // Initialize the app
+        function init() {
+            // Add event listeners to topic buttons
+            topicButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    currentTopic = button.getAttribute('data-topic');
+                    startQuiz();
+                });
+            });
+
+            // Add event listeners to navigation buttons
+            prevBtn.addEventListener('click', showPreviousQuestion);
+            nextBtn.addEventListener('click', showNextQuestion);
+            restartBtn.addEventListener('click', restartQuiz);
+        }
+
+        // Start the quiz
+        async function startInterview() {
+  state.currentQuestion = 0;
+  state.answers = [];
+
+  try {
+    state.generatedQuestions = await fetchQuestions();
+
+    if (!state.generatedQuestions || !state.generatedQuestions.length) {
+      alert("Failed to load interview questions.");
+      return;
+    }
+
+    showQuestion();
+    updateProgress();
+  } catch (err) {
+    alert("Server error while generating questions.");
+    console.error(err);
+  }
+}
+
+            // Get questions for the selected topic
+            currentQuestions = quizData[currentTopic];
+            currentQuestionIndex = 0;
+            userAnswers = new Array(currentQuestions.length).fill(null);
+            
+            // Hide topic selection and show quiz
+            topicSelection.style.display = 'none';
+            quizContainer.style.display = 'block';
+            
+            // Display the first question
+            displayQuestion();
+        }
+
+        // Display the current question
+        function displayQuestion() {
+            const question = currentQuestions[currentQuestionIndex];
+            
+            // Update question number and text
+            questionNumber.textContent = `Question ${currentQuestionIndex + 1} of ${currentQuestions.length}`;
+            questionText.textContent = question.question;
+            
+            // Update progress bar
+            progressBar.style.width = `${((currentQuestionIndex + 1) / currentQuestions.length) * 100}%`;
+            
+            // Clear previous options
+            optionsContainer.innerHTML = '';
+            
+            // Create option elements
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                if (userAnswers[currentQuestionIndex] === index) {
+                    optionElement.classList.add('selected');
+                }
+                optionElement.textContent = option;
+                optionElement.addEventListener('click', () => selectOption(index));
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            // Update navigation buttons
+            prevBtn.disabled = currentQuestionIndex === 0;
+            
+            // Hide explanation initially
+            explanation.style.display = 'none';
+            
+            // Update next button text for last question
+            if (currentQuestionIndex === currentQuestions.length - 1) {
+                nextBtn.textContent = 'Finish Quiz';
+            } else {
+                nextBtn.textContent = 'Next';
+            }
+        }
+
+        // Select an option
+        function selectOption(optionIndex) {
+            // Update user's answer
+            userAnswers[currentQuestionIndex] = optionIndex;
+            
+            // Update UI to show selected option
+            const options = document.querySelectorAll('.option');
+            options.forEach((option, index) => {
+                if (index === optionIndex) {
+                    option.classList.add('selected');
+                } else {
+                    option.classList.remove('selected');
+                }
+            });
+            
+            // Show explanation
+            const question = currentQuestions[currentQuestionIndex];
+            // explanationText.textContent = question.explanation;
+            // explanation.style.display = 'block';
+        }
+
+        // Show previous question
+        function showPreviousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                displayQuestion();
+            }
+        }
+
+        // Show next question or finish quiz
+        function showNextQuestion() {
+            if (userAnswers[currentQuestionIndex] === null) {
+                alert('Please select an answer before proceeding.');
+                return;
+            }
+            
+            if (currentQuestionIndex < currentQuestions.length - 1) {
+                currentQuestionIndex++;
+                displayQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        // Finish the quiz and show results
+        function finishQuiz() {
+            // Calculate score
+            score = 0;
+            currentQuestions.forEach((question, index) => {
+                if (userAnswers[index] === question.correct) {
+                    score++;
+                }
+            });
+            
+            // Hide quiz and show results
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            
+            // Display score and message
+            scoreElement.textContent = `${score}/${currentQuestions.length}`;
+            
+            // Custom message based on score
+            if (score === currentQuestions.length) {
+                messageElement.textContent = 'Perfect! You are an expert!';
+            } else if (score >= currentQuestions.length * 0.7) {
+                messageElement.textContent = 'Great job! You have a good understanding.';
+            } else if (score >= currentQuestions.length * 0.5) {
+                messageElement.textContent = 'Good effort! Keep learning.';
+            } else {
+                messageElement.textContent = 'Keep studying! You can do better.';
+            }
+        }
+
+        // Restart the quiz
+        function restartQuiz() {
+            // Reset state
+            currentTopic = '';
+            currentQuestions = [];
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            score = 0;
+            
+            // Show topic selection and hide results
+            resultsContainer.style.display = 'none';
+            topicSelection.style.display = 'block';
+        }
+
+        // Initialize the app when the page loads
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
