@@ -509,7 +509,8 @@
 
         // Question database with keywords for scoring
        async function fetchQuestions() {
-  const res = await fetch("http://localhost:5000/generate-questions", {
+  const res = await fetch("https://your-backend-name.onrender.com/generate-questions")
+, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -786,7 +787,7 @@
 
 
 async function evaluateAnswerAI(question, answer) {
-  const res = await fetch("http://localhost:5000/evaluate-answer", {
+  const res = await fetch("https://your-backend-name.onrender.com/evaluate-answer", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -829,4 +830,5 @@ async function evaluateAnswerAI(question, answer) {
         window.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
+
 </html>
