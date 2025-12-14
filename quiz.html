@@ -749,26 +749,7 @@
         }
 
         // Start the quiz
-        async function startInterview() {
-  state.currentQuestion = 0;
-  state.answers = [];
-
-  try {
-    state.generatedQuestions = await fetchQuestions();
-
-    if (!state.generatedQuestions || !state.generatedQuestions.length) {
-      alert("Failed to load interview questions.");
-      return;
-    }
-
-    showQuestion();
-    updateProgress();
-  } catch (err) {
-    alert("Server error while generating questions.");
-    console.error(err);
-  }
-}
-
+        function startQuiz() {
             // Get questions for the selected topic
             currentQuestions = quizData[currentTopic];
             currentQuestionIndex = 0;
@@ -780,7 +761,7 @@
             
             // Display the first question
             displayQuestion();
-        
+        }
 
         // Display the current question
         function displayQuestion() {
