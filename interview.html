@@ -508,16 +508,22 @@
         };
 
         // Question database with keywords for scoring
-       async function fetchQuestions() {
-  const res = await fetch("https://your-backend-name.onrender.com/generate-questions")
-, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      level: state.selectedLevel,
-      position: state.selectedPosition
-    })
-  });
+async function fetchQuestions() {
+  const res = await fetch(
+    "https://interviewprep-9iro.onrender.com/generate-questions",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        level: state.selectedLevel,
+        position: state.selectedPosition
+      })
+    }
+  );
+
+  return await res.json();
+}
+
 
   return await res.json();
 }
@@ -787,7 +793,7 @@
 
 
 async function evaluateAnswerAI(question, answer) {
-  const res = await fetch("https://your-backend-name.onrender.com/evaluate-answer", {
+  const res = await fetch("https://interviewprep-9iro.onrender.com/evaluate-answer", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -832,3 +838,4 @@ async function evaluateAnswerAI(question, answer) {
 </body>
 
 </html>
+
