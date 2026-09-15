@@ -151,7 +151,7 @@ ai-interview-platform/
 
 | Resume Analyzer | Quiz Module | Video Interview |
 |------------------|-------------|------------------|
-| ![resume](docs/screenshots/resume.png) | ![quiz](docs/screenshots/quiz.png) | ![video](docs/screenshots/video.png) |
+| ![resume](docs/screenshots/resume.png) | ![quiz](docs/screenshots/quiz.png) | ![interview](docs/screenshots/video.png) |
 
 ---
 
@@ -165,19 +165,7 @@ ai-interview-platform/
 
 ---
 
-## 🤝 Contributing
 
-Contributions are always welcome!
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-Please make sure to update tests as appropriate and follow the existing code style.
-
----
 
 ## 📜 License
 
@@ -188,9 +176,9 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 ## 👤 Author
 
 **Your Name**
-- GitHub: [@your-username](https://github.com/your-username)
-- LinkedIn: [Your Name](https://linkedin.com/in/your-profile)
-- Email: your.email@example.com
+- GitHub: [Shubham-806](https://github.com/Shubham-806)
+- LinkedIn: [Shubham Singh] (https://linkedin.com/in/shubhamsingh806)
+- Email: shubhamkusingh806@gmail.com
 
 ---
 
